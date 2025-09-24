@@ -17,9 +17,10 @@ html, body, #map {
   backdrop-filter: blur(6px);
 }
 #map {
-  position: absolute;
+   position: absolute;
   top: 48px;
   left: 0; right: 0; bottom: 0;
+  min-height: calc(100vh - 48px);
 }
 .hidden { display: none; }
 #admin-panel {
@@ -45,4 +46,5 @@ html, body, #map {
   border-radius: 6px;
   cursor: pointer;
 }
+
 button { cursor: pointer; }
