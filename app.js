@@ -1,25 +1,11 @@
-const firebaseConfig = {// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase configini kendi projenle değiştir
 const firebaseConfig = {
-  apiKey: "AIzaSyAJkdKDJc0_5OB-QLPpTE7KhSEUAW8qyzg",
-  authDomain: "msfs-1eeed.firebaseapp.com",
-  projectId: "msfs-1eeed",
-  storageBucket: "msfs-1eeed.firebasestorage.app",
-  messagingSenderId: "953746578457",
-  appId: "1:953746578457:web:df91b27ab14884c94dde88",
-  measurementId: "G-M0DTKY5QPQ"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
- 
+  apiKey: "REPLACE_ME",
+  authDomain: "REPLACE_ME.firebaseapp.com",
+  projectId: "REPLACE_ME",
+  storageBucket: "REPLACE_ME.appspot.com",
+  messagingSenderId: "REPLACE_ME",
+  appId: "REPLACE_ME"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -33,7 +19,6 @@ const adminPanel = document.getElementById("admin-panel");
 const routeStatus = document.getElementById("route-status");
 
 let isAdmin = false;
-let userUid = null;
 
 const map = L.map('map', { worldCopyJump: true }).setView([41.015137, 28.97953], 4);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: "© OpenStreetMap katkıcıları" }).addTo(map);
@@ -153,14 +138,15 @@ signOutBtn.addEventListener('click', async () => { await auth.signOut(); });
 
 auth.onAuthStateChanged(async (user) => {
   if (user) {
-    userUid = user.uid; console.log("UID'in (Rules'a koy):", userUid);
+    console.log("UID'in (Rules'a koy):", user.uid);
     userInfo.textContent = `Giriş: ${user.displayName || user.email}`;
-    signInBtn.classList.add('hidden'); signOutBtn.classList.remove('hidden');
+    document.getElementById('sign-in-btn').classList.add('hidden');
+    document.getElementById('sign-out-btn').classList.remove('hidden');
     isAdmin = true; adminPanel.classList.remove('hidden');
   } else {
-    userUid = null; userInfo.textContent = '';
-    signInBtn.classList.remove('hidden'); signOutBtn.classList.add('hidden');
+    userInfo.textContent = '';
+    document.getElementById('sign-in-btn').classList.remove('hidden');
+    document.getElementById('sign-out-btn').classList.add('hidden');
     isAdmin = false; adminPanel.classList.add('hidden');
   }
-
 });
