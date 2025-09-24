@@ -3,24 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MSFS Dünya Turu Haritası</title>
+  <title>MSFS Dünya Turu</title>
 
-<link rel="stylesheet" href="styles.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 
-<script defer src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
-
-<script defer src="app.js?v=2"></script>
+  <!-- Firebase şimdilik ÇIKARILDI -->
+  <script defer src="app.js?v=debug1"></script>
 </head>
 <body>
   <div class="topbar">
-    <div class="left">
-      <strong>MSFS Dünya Turu</strong>
-      <span id="route-status"></span>
-    </div>
+    <div class="left"><strong>MSFS Dünya Turu</strong></div>
     <div class="right">
       <button id="sign-in-btn">Giriş Yap</button>
       <button id="sign-out-btn" class="hidden">Çıkış</button>
@@ -28,15 +22,5 @@
     </div>
   </div>
   <div id="map"></div>
-  <div id="admin-panel" class="hidden">
-    <h3>Yönetici Paneli</h3>
-    <p>Haritadaki bir noktaya tıklayıp isim ver; tıklayınca ziyaret durumunu değiştir.</p>
-    <div class="actions">
-      <button id="undo-last">Son noktayı sil</button>
-      <button id="clear-all" class="danger">Hepsini temizle</button>
-    </div>
-  </div>
 </body>
 </html>
-
-
