@@ -1,10 +1,25 @@
+const firebaseConfig = {// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME"
+  apiKey: "AIzaSyAJkdKDJc0_5OB-QLPpTE7KhSEUAW8qyzg",
+  authDomain: "msfs-1eeed.firebaseapp.com",
+  projectId: "msfs-1eeed",
+  storageBucket: "msfs-1eeed.firebasestorage.app",
+  messagingSenderId: "953746578457",
+  appId: "1:953746578457:web:df91b27ab14884c94dde88",
+  measurementId: "G-M0DTKY5QPQ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+ 
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -147,4 +162,5 @@ auth.onAuthStateChanged(async (user) => {
     signInBtn.classList.remove('hidden'); signOutBtn.classList.add('hidden');
     isAdmin = false; adminPanel.classList.add('hidden');
   }
+
 });
