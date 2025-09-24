@@ -92,7 +92,23 @@ function upsertMarker(id, data) {
     m.bindTooltip(label);
   } else {
     var marker = L.marker([lat, lng], { icon: buildIcon(color) }).bindTooltip(label).addTo(map);
-    marker.on("click", function () { if (!isAdmin) return; toggleVisited(id); });
+
+// Sol tık = ziyaret değiştir, Shift + Sol tık = SİL
+marker.on("click", function (e) {
+  if (!isAdmin) return;
+  if (e && e.originalEvent && e.originalEvent.shiftKey) {
+    if (confirm("Bu noktayı tamamen sil?")) deleteCity(id);
+  } else {
+    toggleVisited(id);
+  }
+});
+
+// Sağ tık = SİL (destekleyen tarayıcılarda)
+marker.on("contextmenu", function (e) {
+  if (!isAdmin) return;
+  if (e && e.originalEvent && e.originalEvent.preventDefault) e.originalEvent.preventDefault();
+  if (confirm("Bu noktayı tamamen sil?")) deleteCity(id);
+});
     cityMarkers.set(id, marker);
   }
 }
@@ -184,7 +200,14 @@ function removeFromRoute(id) {
     });
   });
 }
-
+function deleteCity(id) {
+  removeFromRoute(id).finally(function () {
+    cityDoc(id).delete().catch(function (err) {
+      console.error("delete error:", err);
+      alert("Silme hatası: " + (err && err.message ? err.message : err));
+    });
+  });
+}
 // Admin panel butonları (opsiyonel)
 var undoBtn = document.getElementById("undo-last");
 if (undoBtn) undoBtn.addEventListener("click", function () {
@@ -208,3 +231,4 @@ if (clearBtn) clearBtn.addEventListener("click", function () {
     return metaDoc.set({ order: [] });
   });
 });
+
