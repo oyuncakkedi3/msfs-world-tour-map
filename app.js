@@ -52,3 +52,114 @@ document.getElementById('sign-in-btn').addEventListener('click', function () {
 document.getElementById('sign-out-btn').addEventListener('click', function () {
   console.log('Çıkış tıklandı (test)');
 });
+// ===== Şehir/rota özellikleri =====
+var cityMarkers = new Map();
+var routeLine = L.polyline([], { color: '#00B894', weight: 3 }).addTo(map);
+var metaDoc = db.collection('meta').doc('route');
+
+function cityDoc(id){ return db.collection('visited').doc(id); }
+function latLngId(latlng){ return latlng.lat.toFixed(5) + '_' + latlng.lng.toFixed(5); }
+
+function buildIcon(color) {
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">'
+          + '<circle cx="12" cy="12" r="8" fill="'+color+'" stroke="#111" stroke-width="2" />'
+          + '</svg>';
+  return L.divIcon({ className: 'city-icon', html: svg, iconSize: [24,24], iconAnchor: [12,12] });
+}
+function upsertMarker(id, data) {
+  var lat = data.lat, lng = data.lng, label = data.name || id;
+  var visited = data.visited === true, color = visited ? '#2ecc71' : '#e74c3c';
+  if (cityMarkers.has(id)) {
+    var m = cityMarkers.get(id);
+    m.setLatLng([lat, lng]);
+    m.setIcon(buildIcon(color));
+    m.bindTooltip(label);
+  } else {
+    var marker = L.marker([lat, lng], { icon: buildIcon(color) }).bindTooltip(label).addTo(map);
+    marker.on('click', function(){ if (!isAdmin) return; toggleVisited(id); });
+    cityMarkers.set(id, marker);
+  }
+}
+
+function drawRoute(order){
+  var pts = [];
+  for (var i=0;i<order.length;i++){
+    var m = cityMarkers.get(order[i]);
+    if (m) pts.push(m.getLatLng());
+  }
+  routeLine.setLatLngs(pts);
+}
+
+function refreshRoute(){
+  metaDoc.get().then(function(snap){
+    var order = snap.exists ? (snap.data().order || []) : [];
+    drawRoute(order);
+  });
+}
+// Firestore canlı dinleyiciler
+db.collection('visited').onSnapshot(function(snap){
+  snap.docChanges().forEach(function(ch){
+    var id = ch.doc.id, d = ch.doc.data();
+    if (ch.type === 'removed') {
+      if (cityMarkers.has(id)) { map.removeLayer(cityMarkers.get(id)); cityMarkers.delete(id); }
+    } else {
+      upsertMarker(id, d);
+    }
+  });
+  refreshRoute();
+});
+
+metaDoc.onSnapshot(function(doc){
+  var data = doc && doc.data ? doc.data() : null;
+  var order = data && data.order ? data.order : [];
+  drawRoute(order);
+});
+
+// Admin: haritaya tıklayınca nokta ekle
+map.on('click', function(e){
+  if (!isAdmin) return;
+  var id = latLngId(e.latlng);
+  var name = prompt('Şehir/konum adı:', '');
+  if (name === null) return;
+  cityDoc(id).set({
+    name: (name && name.trim()) ? name.trim() : id,
+    lat: e.latlng.lat,
+    lng: e.latlng.lng,
+    visited: true,
+    updatedAt: Date.now()
+  }, { merge: true }).then(function(){
+    pushToRoute(id);
+  });
+});
+
+// Ziyaret durumunu değiştir
+function toggleVisited(id){
+  cityDoc(id).get().then(function(doc){
+    if (!doc.exists) return;
+    var prev = doc.data().visited === true;
+    cityDoc(id).set({ visited: !prev, updatedAt: Date.now() }, { merge: true })
+      .then(function(){
+        if (!prev) pushToRoute(id); else removeFromRoute(id);
+      });
+  });
+}
+
+// Rotaya ekle/çıkar
+function pushToRoute(id){
+  return db.runTransaction(function(tx){
+    return tx.get(metaDoc).then(function(snap){
+      var order = snap.exists ? (snap.data().order || []) : [];
+      if (order.indexOf(id) === -1) order.push(id);
+      tx.set(metaDoc, { order: order }, { merge: true });
+    });
+  });
+}
+function removeFromRoute(id){
+  return db.runTransaction(function(tx){
+    return tx.get(metaDoc).then(function(snap){
+      var order = snap.exists ? (snap.data().order || []) : [];
+      var next = order.filter(function(x){ return x !== id; });
+      tx.set(metaDoc, { order: next }, { merge: true });
+    });
+  });
+}
