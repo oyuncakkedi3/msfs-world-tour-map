@@ -1,3 +1,4 @@
+console.log('app.js başladı');
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 const firebaseConfig = {
@@ -46,3 +47,4 @@ auth.onAuthStateChanged((user) => {
     adminPanel?.classList.add('hidden');
   }
 });  
+
