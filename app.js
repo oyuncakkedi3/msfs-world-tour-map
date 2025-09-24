@@ -5,7 +5,6 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap katkıcıları'
 }).addTo(map);
 
-// Geçici: butonların tıklandığını görelim
 document.getElementById('sign-in-btn').addEventListener('click', function () {
   console.log('Giriş Yap tıklandı (test)');
 });
