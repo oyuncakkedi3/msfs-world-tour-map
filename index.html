@@ -5,12 +5,21 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MSFS Dünya Turu</title>
 
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; }
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 12px; background: #222; color: #fff; z-index: 1000;
+    }
+    #map { position: absolute; top: 48px; left: 0; right: 0; bottom: 0; }
+    .hidden { display: none; }
+  </style>
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 
-  <!-- Firebase şimdilik ÇIKARILDI -->
-  <script defer src="app.js?v=debug1"></script>
+  <script defer src="app.js?v=mini"></script>
 </head>
 <body>
   <div class="topbar">
